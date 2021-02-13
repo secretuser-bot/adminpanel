@@ -58,5 +58,10 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     }
 
 
+    public function getRole()
+    {
+        return $this->hasOne(Roles::className(), ['id' => 'role_id']);
+    }
+
 
 }

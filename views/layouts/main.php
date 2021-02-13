@@ -39,15 +39,37 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-
     $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
-        ['label' => 'Contact', 'url' => ['/site/contact']],
+        ['label' => 'Главная', 'url' => ['/site/index']],
     ];
+
+    if (Yii::$app->user->identity->role_id == 1) {
+
+        /*$menuItems = [
+            ['label' => 'Клиенты', 'url' => ['/site/clients']],
+        ];*/
+        array_push($menuItems,
+            ['label' => 'Клиенты', 'url' => ['/site/clients']],
+            ['label' => 'Города', 'url' => ['/site/cities']],
+            ['label' => 'Товары', 'url' => ['/site/products']],
+            ['label' => 'Пользователи', 'url' => ['/site/users']],
+        );
+
+    }
+    if (Yii::$app->user->identity->role_id == 2) {
+
+        /*$menuItems = [
+            ['label' => 'Клиенты', 'url' => ['/site/clients']],
+        ];*/
+        array_push($menuItems,
+            ['label' => 'Товары', 'url' => ['/site/products']],
+        );
+
+    }
+
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+        $menuItems[] = ['label' => 'Регистрация', 'url' => ['/site/signup']];
+        $menuItems[] = ['label' => 'Вход', 'url' => ['/site/login']];
     } else {
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
@@ -58,6 +80,7 @@ AppAsset::register($this);
             . Html::endForm()
             . '</li>';
     }
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => $menuItems,
