@@ -22,7 +22,7 @@ use yii\bootstrap\ActiveForm;
         echo '  <tr>
                 <td>'.$address->id.'</td>
                 <td>'.$address->desc.'</td>
-                <td><img width="100px" height="100px" src="../web/'.$address->img.'"></td>
+                <td><img width="100px" height="100px" src="../web/'.$address->imgs->img.'"></td>
                 <td>'.$address->status.'</td>
                 <td>'.$address->region->name.'</td>
                 <td>'.$address->leg->username.'</td>
@@ -41,14 +41,14 @@ use yii\bootstrap\ActiveForm;
     echo '<div class="row">
             <div class="col-lg-5">'; ?>
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 <?= $form->field($model, 'status')->textInput(['style' => 'display:none', 'value' => 'Доступен'])->label('') ?>
 <?= $form->field($model, 'package_id')->textInput(['style' => 'display:none', 'value' => $package_id])->label('') ?>
 <?= $form->field($model, 'leg_id')->textInput(['style' => 'display:none', 'value' => Yii::$app->user->identity->id])->label('') ?>
 
 <?= $form->field($model, 'region_id')->dropDownList($items_region)->label('Район') ?>
 <?= $form->field($model, 'desc')->textarea(['rows' => '6'])->label('Описание') ?>
-<?= $form->field($model, 'img')->fileInput()->label('Картинки') ?>
+<?= $form->field($picturemodel, 'img[]')->fileInput(['multiple' => true, 'accept' => 'image/*'])->label('Картинки') ?>
 
 
 

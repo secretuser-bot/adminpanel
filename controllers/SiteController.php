@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use Yii;
 
+use app\models\ImgsToAddresses;
+use app\models\ImgToAddresses;
 use app\models\Products;
 use app\models\Packages;
 use app\models\Eds;
@@ -239,6 +241,24 @@ class SiteController extends Controller
         }
     }
 
+    public function actionRemoveproducts($idremove)
+    {
+        if (Yii::$app->user->identity->role_id == 1) {
+
+
+            $oneproduct = Products::findOne($idremove);
+            /*$addresses
+            for ($i = 0; $i < count($addresses); $i++) {
+                $addresses[$i]->delete();
+            }*/
+            $oneproduct->delete();
+
+            return $this->redirect('products');
+        } else {
+            return $this->goHome();
+        }
+    }
+
     public function actionPackages($product_id , $idedit = null)
     {
 
@@ -289,25 +309,104 @@ class SiteController extends Controller
             }
             $model = new Addresses();
 
+
             if ($model->load(Yii::$app->request->post())) {
-                $model->img = UploadedFile::getInstance($model, 'img');
-                if ($model->img !== null) {
-                    $model->img->saveAs('uploads/' . $model->img->basename . '.' . $model->img->extension);
-                    $model->img = 'uploads/' . $model->img->basename . '.' . $model->img->extension;
-                    $model->save();
-                    return $this->redirect('addresses?package_id='.$package_id);
-                } else {
-                    $model->img = 'none';
-                    return $this->redirect('addresses?package_id='.$package_id);
-                }
+                $model->save();
+                $address_id = $model->id;
+            }
+
+            $picturemodel = new ImgsToAddresses();
+
+            if ($picturemodel->load(Yii::$app->request->post())) {
+                $picturemodel->img = UploadedFile::getInstances($picturemodel, 'img');
+
+
+                    foreach ($picturemodel->img as $picture) {
+                        if ($picture != null) {
+                            $image = new ImgToAddresses();
+                            $picture->saveAs('uploads/' . $picture->basename . '.' . $picture->extension);
+                            $image->img = 'uploads/' . $picture->basename . '.' . $picture->extension;
+                            $image->address_id = $address_id;
+                            $image->save();
+                        } else {
+                            $picture->img = 'none';
+                            return $this->redirect('addresses?package_id='.$package_id);
+                        }
+                    }
+
+
+
+                return $this->redirect('addresses?package_id='.$package_id);
+
             }
 
 
-            return $this->render('addresses', compact('addresses', 'model', 'buttonname', 'package_id', 'items_region'));
+
+
+
+
+            return $this->render('addresses', compact('addresses', 'model', 'buttonname', 'package_id', 'items_region', 'picturemodel', 'address_id'));
         } else {
             return $this->goHome();
         }
     }
+
+    /*public function actionAddresspage($address_id , $idedit = null)
+    {
+
+        if (Yii::$app->user->identity->role_id == 1 || Yii::$app->user->identity->role_id == 2) {
+
+
+
+            $address = Addresses::find()->where('address_id=' . $address_id)->one();
+
+            if ($idedit) {
+                $buttonname = 'Редактировать';
+                $model = Addresses::findOne($idedit);
+                if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                    return $this->redirect('packages?product_id=' . $product_id);
+                }
+                return $this->render('addresses', compact('addresses', 'model', 'buttonname', 'package_id', 'items_region'));
+            }
+            $model = new Addresses();
+
+
+            if ($model->load(Yii::$app->request->post())) {
+                $model->save();
+                $address_id = $model->id;
+            }
+
+            $picturemodel = new ImgsToAddresses();
+
+            if ($picturemodel->load(Yii::$app->request->post())) {
+                $picturemodel->img = UploadedFile::getInstances($picturemodel, 'img');
+
+                foreach ($picturemodel as $picture) {
+                    if ($picture->img !== null) {
+                        $picture->img->saveAs('uploads/' . $picture->img->basename . '.' . $picture->img->extension);
+                        $picture->img = 'uploads/' . $picture->img->basename . '.' . $picture->img->extension;
+                        $picture->adrress_id = $address_id;
+                        $picture->save();
+                    } else {
+                        $picturemodel->img = 'none';
+                        return $this->redirect('addresses?package_id='.$package_id);
+                    }
+                }
+
+                return $this->redirect('addresses?package_id='.$package_id);
+
+            }
+
+
+
+
+
+
+            return $this->render('addresses', compact('addresses', 'model', 'buttonname', 'package_id', 'items_region', 'picturemodel', 'address_id'));
+        } else {
+            return $this->goHome();
+        }
+    }*/
 
     public function actionRemovepackage($product_id, $idremove)
     {

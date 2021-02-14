@@ -26,7 +26,7 @@ use yii\bootstrap\ActiveForm;
                 <td><a href="packages?product_id='.$product->id.'"><button type="button" class="btn btn-info btn-sm">К упаковкам</button></a>';
         if (Yii::$app->user->identity->role_id == 1)
         {  echo '<a href="products?idedit='.$product->id.'"><button type="button" class="btn btn-info btn-sm" style="margin-left: 10px;">Редактировать</button></a>
-                 <a href="removeproducts?id='.$product->id.'"><button type="button" class="btn btn-danger btn-sm" style="margin-left: 10px;">Удалить</button></a>';}
+                 <a href="removeproducts?idremove='.$product->id.'"><button type="button" class="btn btn-danger btn-sm" style="margin-left: 10px;">Удалить</button></a>';}
         echo '</td>
             </tr>';
 

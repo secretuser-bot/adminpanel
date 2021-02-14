@@ -9,7 +9,6 @@ use Yii;
  *
  * @property int $id
  * @property string $desc
- * @property string $img
  * @property string $status
  * @property int $package_id
  * @property int $region_id
@@ -38,10 +37,10 @@ class Addresses extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['desc', 'img', 'status', 'package_id', 'region_id', 'leg_id'], 'required'],
+            [['desc', 'status', 'package_id', 'region_id', 'leg_id'], 'required'],
             [['package_id', 'region_id', 'leg_id', 'tg_id'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
-            [['desc', 'img', 'status'], 'string', 'max' => 255],
+            [['desc',  'status'], 'string', 'max' => 255],
             [['leg_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['leg_id' => 'id']],
             [['package_id'], 'exist', 'skipOnError' => true, 'targetClass' => Packages::className(), 'targetAttribute' => ['package_id' => 'id']],
             [['region_id'], 'exist', 'skipOnError' => true, 'targetClass' => Regions::className(), 'targetAttribute' => ['region_id' => 'id']],
@@ -56,7 +55,6 @@ class Addresses extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'desc' => 'Desc',
-            'img' => 'Img',
             'status' => 'Status',
             'package_id' => 'Package ID',
             'region_id' => 'Region ID',
@@ -95,5 +93,9 @@ class Addresses extends \yii\db\ActiveRecord
     public function getRegion()
     {
         return $this->hasOne(Regions::className(), ['id' => 'region_id']);
+    }
+    public function getImgs()
+    {
+        return $this->hasOne(ImgsToAddresses::className(), ['address_id' => 'id']);
     }
 }
